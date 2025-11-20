@@ -32,7 +32,7 @@ export class MollieOAuth2Api implements ICredentialType {
 			displayName: 'Scope',
 			name: 'scope',
 			type: 'hidden',
-			default: '={{ "organizations.read profiles.read" + ($parameter.additionalScopes && $parameter.additionalScopes.length ? " " + $parameter.additionalScopes.join(" ") : "") }}',
+			default: '={{ "organizations.read profiles.read" + ($credentials.additionalScopes && $credentials.additionalScopes.length ? " " + $credentials.additionalScopes.join(" ") : "") }}',
 			description: 'Base scopes (organizations.read, profiles.read) plus any additional scopes selected',
 		},
 		{
@@ -51,7 +51,7 @@ export class MollieOAuth2Api implements ICredentialType {
 			displayName: 'Additional Scopes',
 			name: 'additionalScopes',
 			type: 'multiOptions',
-			default: ['payments.read', 'payments.write', 'refunds.read', 'refunds.write'],
+			default: ['payments.read', 'payments.write', 'refunds.read', 'refunds.write', 'balances.read'],
 			description: 'Select additional scopes you want to get access to. These will be added to the base scopes (organizations.read, profiles.read).',
 			options: [
 				{

@@ -50,7 +50,7 @@ export class MollieOAuth2Api implements ICredentialType {
 			displayName: 'Client ID',
 			name: 'clientId',
 			type: 'string',
-			default: '',
+			default: 'app_kMFXHdtHbXEoGsHQNCWZDXwx',
 			required: true,
 			description: 'OAuth2 Client ID from your Mollie App. Create your app at: https://www.mollie.com/dashboard/developers/applications',
 		},
@@ -61,7 +61,7 @@ export class MollieOAuth2Api implements ICredentialType {
 			typeOptions: {
 				password: true,
 			},
-			default: '',
+			default: 'cSzFvSgJscDDnVddx5GTSmbwd2KxH37BGGmngvrf',
 			required: true,
 			description: 'OAuth2 Client Secret from your Mollie App',
 		},

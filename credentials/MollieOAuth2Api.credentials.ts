@@ -32,14 +32,13 @@ export class MollieOAuth2Api implements ICredentialType {
 			displayName: 'Scope',
 			name: 'scope',
 			type: 'hidden',
-			default: '={{ "organizations.read profiles.read" + ($credentials.additionalScopes && $credentials.additionalScopes.length ? " " + $credentials.additionalScopes.join(" ") : "") }}',
-			description: 'Base scopes (organizations.read, profiles.read) plus any additional scopes selected',
+			default: 'organizations.read profiles.read payments.read payments.write refunds.read refunds.write balances.read customers.read mandates.read subscriptions.read invoices.read settlements.read orders.read shipments.read',
 		},
 		{
 			displayName: 'Auth URI Query Parameters',
 			name: 'authQueryParameters',
 			type: 'hidden',
-			default: 'response_type=code',
+			default: '',
 		},
 		{
 			displayName: 'Authentication',
@@ -48,113 +47,12 @@ export class MollieOAuth2Api implements ICredentialType {
 			default: 'body',
 		},
 		{
-			displayName: 'Additional Scopes',
-			name: 'additionalScopes',
-			type: 'multiOptions',
-			default: ['payments.read', 'payments.write', 'refunds.read', 'refunds.write', 'balances.read'],
-			description: 'Select additional scopes you want to get access to. These will be added to the base scopes (organizations.read, profiles.read).',
-			options: [
-				{
-					name: 'Payments Read',
-					value: 'payments.read',
-				},
-				{
-					name: 'Payments Write',
-					value: 'payments.write',
-				},
-				{
-					name: 'Refunds Read',
-					value: 'refunds.read',
-				},
-				{
-					name: 'Refunds Write',
-					value: 'refunds.write',
-				},
-				{
-					name: 'Customers Read',
-					value: 'customers.read',
-				},
-				{
-					name: 'Customers Write',
-					value: 'customers.write',
-				},
-				{
-					name: 'Mandates Read',
-					value: 'mandates.read',
-				},
-				{
-					name: 'Mandates Write',
-					value: 'mandates.write',
-				},
-				{
-					name: 'Subscriptions Read',
-					value: 'subscriptions.read',
-				},
-				{
-					name: 'Subscriptions Write',
-					value: 'subscriptions.write',
-				},
-				{
-					name: 'Profiles Write',
-					value: 'profiles.write',
-				},
-				{
-					name: 'Invoices Read',
-					value: 'invoices.read',
-				},
-				{
-					name: 'Settlements Read',
-					value: 'settlements.read',
-				},
-				{
-					name: 'Orders Read',
-					value: 'orders.read',
-				},
-				{
-					name: 'Orders Write',
-					value: 'orders.write',
-				},
-				{
-					name: 'Shipments Read',
-					value: 'shipments.read',
-				},
-				{
-					name: 'Shipments Write',
-					value: 'shipments.write',
-				},
-				{
-					name: 'Organizations Write',
-					value: 'organizations.write',
-				},
-				{
-					name: 'Onboarding Read',
-					value: 'onboarding.read',
-				},
-				{
-					name: 'Onboarding Write',
-					value: 'onboarding.write',
-				},
-				{
-					name: 'Balances Read',
-					value: 'balances.read',
-				},
-			],
-		},
-		{
-			displayName: 'Test Mode',
-			name: 'testMode',
-			type: 'boolean',
-			default: true,
-			description: 'Whether to use test mode. This adds testmode=true to API requests.',
-		},
-		{
 			displayName: 'Client ID',
 			name: 'clientId',
 			type: 'string',
-			// TODO BEFORE PRODUCTION: Change to environment variable
-			// default: '={{ $env.MOLLIE_OAUTH_CLIENT_ID || "" }}',
 			default: 'app_kMFXHdtHbXEoGsHQNCWZDXwx',
-			description: 'OAuth2 Client ID. Default is the shared app (works for n8n Cloud: app.n8n.cloud). For self-hosted instances, <a href="https://www.mollie.com/dashboard/developers/applications" target="_blank">create your own app</a> and replace this value.',
+			required: true,
+			description: 'OAuth2 Client ID from your Mollie App. Create your app at: https://www.mollie.com/dashboard/developers/applications',
 		},
 		{
 			displayName: 'Client Secret',
@@ -163,10 +61,9 @@ export class MollieOAuth2Api implements ICredentialType {
 			typeOptions: {
 				password: true,
 			},
-			// TODO BEFORE PRODUCTION: Change to environment variable
-			// default: '={{ $env.MOLLIE_OAUTH_CLIENT_SECRET || "" }}',
 			default: 'cSzFvSgJscDDnVddx5GTSmbwd2KxH37BGGmngvrf',
-			description: 'OAuth2 Client Secret. Default is the shared app (works for n8n Cloud). For self-hosted instances, replace with your own Client Secret.',
+			required: true,
+			description: 'OAuth2 Client Secret from your Mollie App',
 		},
 	];
 }

@@ -130,22 +130,12 @@ export class Mollie implements INodeType {
 										const limit = this.getNodeParameter('limit', 0) as number;
 										const fromParam = this.getNodeParameter('from', 0);
 										const from = fromParam ? String(fromParam) : '';
-										const authentication = this.getNodeParameter('authentication', 0) as string;
 										
 										requestOptions.qs = requestOptions.qs || {};
 										requestOptions.qs.limit = Math.min(limit, 250);
 										
 										if (from) {
 											requestOptions.qs.from = from;
-										}
-										
-										// Only include testmode for OAuth2
-										if (authentication === 'oAuth2') {
-											const testModeParam = this.getNodeParameter('testMode', 0);
-											const testMode = testModeParam === true;
-											if (testMode) {
-												requestOptions.qs.testmode = true;
-											}
 										}
 										
 										return requestOptions;
@@ -218,6 +208,8 @@ export class Mollie implements INodeType {
 									},
 									description: '={{$parameter.description || undefined}}',
 									metadata: '={{$parameter.metadata || undefined}}',
+									// Only include testmode for OAuth2
+									testmode: '={{$parameter.authentication === "oAuth2" ? $parameter.testMode : undefined}}',
 								},
 							},
 						},
@@ -256,6 +248,25 @@ export class Mollie implements INodeType {
 								method: 'GET',
 								url: '=/v2/payments/{{$parameter.paymentId}}',
 							},
+							send: {
+								preSend: [
+									async function (this, requestOptions) {
+										const authentication = this.getNodeParameter('authentication', 0) as string;
+										
+										// Only include testmode for OAuth2
+										if (authentication === 'oAuth2') {
+											const testModeParam = this.getNodeParameter('testMode', 0);
+											const testMode = testModeParam === true;
+											if (testMode) {
+												requestOptions.qs = requestOptions.qs || {};
+												requestOptions.qs.testmode = true;
+											}
+										}
+										
+										return requestOptions;
+									},
+								],
+							},
 						},
 					},
 					{
@@ -267,9 +278,6 @@ export class Mollie implements INodeType {
 							request: {
 								method: 'GET',
 								url: '/v2/payments',
-								qs: {
-									limit: '={{$parameter.limit ?? 100}}',
-								},
 							},
 							output: {
 								postReceive: [
@@ -278,6 +286,29 @@ export class Mollie implements INodeType {
 										properties: {
 											property: '_embedded.payments',
 										},
+									},
+								],
+							},
+							send: {
+								preSend: [
+									async function (this, requestOptions) {
+										const limitParam = this.getNodeParameter('limit', 0);
+										const limit = limitParam ? Number(limitParam) : 100;
+										const authentication = this.getNodeParameter('authentication', 0) as string;
+										
+										requestOptions.qs = requestOptions.qs || {};
+										requestOptions.qs.limit = limit;
+										
+										// Only include testmode for OAuth2
+										if (authentication === 'oAuth2') {
+											const testModeParam = this.getNodeParameter('testMode', 0);
+											const testMode = testModeParam === true;
+											if (testMode) {
+												requestOptions.qs.testmode = true;
+											}
+										}
+										
+										return requestOptions;
 									},
 								],
 							},
@@ -379,20 +410,6 @@ export class Mollie implements INodeType {
 				},
 				default: 100,
 				description: 'The maximum number of results to be worked with during one execution cycle',
-			},
-			{
-				displayName: 'Test Mode',
-				name: 'testMode',
-				type: 'boolean',
-				displayOptions: {
-					show: {
-						resource: ['balance'],
-						operation: ['getTransactions'],
-						authentication: ['oAuth2'],
-					},
-				},
-				default: false,
-				description: 'Whether to retrieve transactions in test mode (OAuth2 only)',
 			},
 			{
 				displayName: 'From',
@@ -780,6 +797,20 @@ export class Mollie implements INodeType {
 				description: 'Provide any data you like in JSON format',
 				placeholder: '{"capture_id": "12345"}',
 			},
+			{
+				displayName: 'Test Mode',
+				name: 'testMode',
+				type: 'boolean',
+				displayOptions: {
+					show: {
+						resource: ['payment'],
+						operation: ['createCapture'],
+						authentication: ['oAuth2'],
+					},
+				},
+				default: false,
+				description: 'Whether to create the capture in test mode (OAuth2 only)',
+			},
 			// Create Refund parameters
 			{
 				displayName: 'Payment',
@@ -988,6 +1019,20 @@ export class Mollie implements INodeType {
 				default: '',
 				description: 'The payment to retrieve',
 			},
+			{
+				displayName: 'Test Mode',
+				name: 'testMode',
+				type: 'boolean',
+				displayOptions: {
+					show: {
+						resource: ['payment'],
+						operation: ['get'],
+						authentication: ['oAuth2'],
+					},
+				},
+				default: false,
+				description: 'Whether to retrieve the payment in test mode (OAuth2 only)',
+			},
 			// List Payments parameters
 			{
 				displayName: 'Return All',
@@ -1019,6 +1064,20 @@ export class Mollie implements INodeType {
 				},
 				default: 100,
 				description: 'Max number of results to return',
+			},
+			{
+				displayName: 'Test Mode',
+				name: 'testMode',
+				type: 'boolean',
+				displayOptions: {
+					show: {
+						resource: ['payment'],
+						operation: ['getAll'],
+						authentication: ['oAuth2'],
+					},
+				},
+				default: false,
+				description: 'Whether to retrieve payments in test mode (OAuth2 only)',
 			},
 			{
 				displayName: 'Filters',

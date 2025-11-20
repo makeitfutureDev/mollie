@@ -32,7 +32,7 @@ export class MollieOAuth2Api implements ICredentialType {
 			displayName: 'Scope',
 			name: 'scope',
 			type: 'hidden',
-			default: 'organizations.read profiles.read payments.read payments.write refunds.read refunds.write balances.read customers.read mandates.read subscriptions.read invoices.read settlements.read orders.read shipments.read',
+			default: 'organizations.read profiles.read payments.read payments.write refunds.read refunds.write balances.read customers.read mandates.read subscriptions.read invoices.read settlements.read orders.read shipments.read payment-links.read payment-links.write',
 		},
 		{
 			displayName: 'Auth URI Query Parameters',
@@ -50,7 +50,7 @@ export class MollieOAuth2Api implements ICredentialType {
 			displayName: 'Client ID',
 			name: 'clientId',
 			type: 'string',
-			default: 'app_kMFXHdtHbXEoGsHQNCWZDXwx',
+			default: '',
 			required: true,
 			description: 'OAuth2 Client ID from your Mollie App. Create your app at: https://www.mollie.com/dashboard/developers/applications',
 		},
@@ -61,7 +61,7 @@ export class MollieOAuth2Api implements ICredentialType {
 			typeOptions: {
 				password: true,
 			},
-			default: 'cSzFvSgJscDDnVddx5GTSmbwd2KxH37BGGmngvrf',
+			default: '',
 			required: true,
 			description: 'OAuth2 Client Secret from your Mollie App',
 		},

@@ -1,0 +1,80 @@
+{
+  "name": "Mollie - Example Workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "When clicking 'Test workflow'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "apiKey",
+        "resource": "payment",
+        "operation": "getAll",
+        "returnAll": false,
+        "limit": 10,
+        "filters": {
+          "status": "paid"
+        }
+      },
+      "id": "2",
+      "name": "Mollie - List Paid Payments",
+      "type": "n8n-nodes-mollie.mollie",
+      "typeVersion": 1,
+      "position": [460, 300],
+      "credentials": {
+        "mollieApi": {
+          "id": "1",
+          "name": "Mollie API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "apiKey",
+        "resource": "payment",
+        "operation": "get",
+        "paymentId": "={{ $json.id }}"
+      },
+      "id": "3",
+      "name": "Mollie - Get Payment Details",
+      "type": "n8n-nodes-mollie.mollie",
+      "typeVersion": 1,
+      "position": [680, 300],
+      "credentials": {
+        "mollieApi": {
+          "id": "1",
+          "name": "Mollie API"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking 'Test workflow'": {
+      "main": [
+        [
+          {
+            "node": "Mollie - List Paid Payments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mollie - List Paid Payments": {
+      "main": [
+        [
+          {
+            "node": "Mollie - Get Payment Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {}
+}

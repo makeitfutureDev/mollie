@@ -1,0 +1,40 @@
+# Source files (we only publish dist/)
+credentials/
+nodes/
+*.ts
+!*.d.ts
+
+# Development files
+.eslintrc.js
+.eslintrc.prepublish.js
+.prettierrc
+tsconfig.json
+gulpfile.js
+
+# Documentation (keep README.md, exclude others)
+DEVELOPMENT.md
+MAKE_TO_N8N_MAPPING.md
+PROJECT_SUMMARY.md
+QUICKSTART.md
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Tests
+test/
+*.test.ts
+*.spec.ts
+
+# Git
+.git/
+.gitignore

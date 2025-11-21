@@ -20,6 +20,20 @@ export class Mollie implements INodeType {
 		},
 		inputs: ['main' as NodeConnectionType],
 		outputs: ['main' as NodeConnectionType],
+		//usableAsTool: false,
+		codex: {
+			categories: ['Finance & Accounting'],
+			subcategories: {
+				'Finance & Accounting': ['Payment Processing'],
+			},
+			resources: {
+				primaryDocumentation: [
+					{
+						url: 'https://docs.mollie.com',
+					},
+				],
+			},
+		},
 		credentials: [
 			{
 				name: 'mollieApi',
@@ -1300,6 +1314,10 @@ export class Mollie implements INodeType {
 					];
 				}
 				
+				// Get test mode from credentials
+				const credentials = await this.getCredentials('mollieOAuth2Api');
+				const testMode = credentials.testMode === true;
+				
 				let response;
 				try {
 					response = await this.helpers.httpRequestWithAuthentication.call(
@@ -1310,6 +1328,7 @@ export class Mollie implements INodeType {
 							url: 'https://api.mollie.com/v2/balances',
 							qs: {
 								limit: 250,
+								...(testMode && { testmode: true }),
 							},
 							json: true,
 						},
@@ -1331,7 +1350,7 @@ export class Mollie implements INodeType {
 				if (balances.length === 0) {
 					return [
 						{
-							name: 'No balances available',
+							name: testMode ? 'No test balances available' : 'No balances available',
 							value: '',
 						},
 					];
@@ -1346,6 +1365,13 @@ export class Mollie implements INodeType {
 			async getPayments(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 				const authentication = this.getNodeParameter('authentication', 0) as string;
 				
+				// Get test mode from credentials if OAuth2
+				let testMode = false;
+				if (authentication === 'oAuth2') {
+					const credentials = await this.getCredentials('mollieOAuth2Api');
+					testMode = credentials.testMode === true;
+				}
+				
 				let response;
 				try {
 					response = await this.helpers.httpRequestWithAuthentication.call(
@@ -1356,6 +1382,7 @@ export class Mollie implements INodeType {
 							url: 'https://api.mollie.com/v2/payments',
 							qs: {
 								limit: 250,
+								...(testMode && { testmode: true }),
 							},
 							json: true,
 						},
@@ -1374,7 +1401,7 @@ export class Mollie implements INodeType {
 				if (payments.length === 0) {
 					return [
 						{
-							name: 'No payments available',
+							name: testMode ? 'No test payments available' : 'No payments available',
 							value: '',
 						},
 					];
@@ -1395,6 +1422,13 @@ export class Mollie implements INodeType {
 			async getProfiles(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
 				const authentication = this.getNodeParameter('authentication', 0) as string;
 				
+				// Get test mode from credentials if OAuth2
+				let testMode = false;
+				if (authentication === 'oAuth2') {
+					const credentials = await this.getCredentials('mollieOAuth2Api');
+					testMode = credentials.testMode === true;
+				}
+				
 				let response;
 				try {
 					response = await this.helpers.httpRequestWithAuthentication.call(
@@ -1405,6 +1439,7 @@ export class Mollie implements INodeType {
 							url: 'https://api.mollie.com/v2/profiles',
 							qs: {
 								limit: 250,
+								...(testMode && { testmode: true }),
 							},
 							json: true,
 						},
@@ -1423,7 +1458,7 @@ export class Mollie implements INodeType {
 				if (profiles.length === 0) {
 					return [
 						{
-							name: 'No profiles available',
+							name: testMode ? 'No test profiles available' : 'No profiles available',
 							value: '',
 						},
 					];

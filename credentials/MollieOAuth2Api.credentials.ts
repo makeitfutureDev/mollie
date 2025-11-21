@@ -65,5 +65,12 @@ export class MollieOAuth2Api implements ICredentialType {
 			required: true,
 			description: 'OAuth2 Client Secret from your Mollie App',
 		},
+		{
+			displayName: 'Test Mode',
+			name: 'testMode',
+			type: 'boolean',
+			default: false,
+			description: 'Whether to use test mode for all API requests. When enabled, only test data will be retrieved and test transactions will be created. Important: After changing this, you must reconnect the credential and refresh any dropdown fields.',
+		},
 	];
 }

@@ -20,15 +20,8 @@ export class MollieApi implements ICredentialType {
 			},
 			default: '',
 			required: true,
-			description: 'Your Mollie API Key. Get it from the <a href="https://www.mollie.com/dashboard/developers/api-keys" target="_blank">Mollie Dashboard</a>. Use test keys (test_xxx) for testing and live keys (live_xxx) for production.',
+			description: 'Your Mollie API Key. Get it from the <a href="https://www.mollie.com/dashboard/developers/api-keys" target="_blank">Mollie Dashboard</a>. Use test keys (test_xxx) for testing and live keys (live_xxx) for production. Test mode is automatically determined by the key prefix.',
 			placeholder: 'test_xxxxxxxxxxxxxxxxxxxxxxxxxx',
-		},
-		{
-			displayName: 'Test Mode',
-			name: 'testMode',
-			type: 'boolean',
-			default: true,
-			description: 'Whether to use test mode. This adds testmode=true to API requests.',
 		},
 	];
 
@@ -46,9 +39,6 @@ export class MollieApi implements ICredentialType {
 			baseURL: 'https://api.mollie.com',
 			url: '/v2/methods',
 			method: 'GET',
-			qs: {
-				testmode: '={{$credentials.testMode}}',
-			},
 		},
 	};
 }

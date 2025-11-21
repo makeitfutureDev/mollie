@@ -20,7 +20,6 @@ export class Mollie implements INodeType {
 		},
 		inputs: ['main' as NodeConnectionType],
 		outputs: ['main' as NodeConnectionType],
-		//usableAsTool: false,
 		codex: {
 			categories: ['Finance & Accounting'],
 			subcategories: {
@@ -200,9 +199,26 @@ export class Mollie implements INodeType {
 									customerId: '={{$parameter.additionalFields?.customerId || undefined}}',
 									mandateId: '={{$parameter.additionalFields?.mandateId || undefined}}',
 									metadata: '={{$parameter.additionalFields?.metadata || undefined}}',
-									// Only include testmode for OAuth2
-									testmode: '={{$parameter.authentication === "oAuth2" ? $parameter.testMode : undefined}}',
 								},
+							},
+							send: {
+								preSend: [
+									async function (this, requestOptions) {
+										const authentication = this.getNodeParameter('authentication', 0) as string;
+										
+										// Only include testmode for OAuth2 - read from credential
+										if (authentication === 'oAuth2') {
+											const credentials = await this.getCredentials('mollieOAuth2Api');
+											const testMode = credentials.testMode === true;
+											if (testMode) {
+												requestOptions.body = requestOptions.body || {};
+												requestOptions.body.testmode = true;
+											}
+										}
+										
+										return requestOptions;
+									},
+								],
 							},
 						},
 					},
@@ -222,9 +238,26 @@ export class Mollie implements INodeType {
 									},
 									description: '={{$parameter.description || undefined}}',
 									metadata: '={{$parameter.metadata || undefined}}',
-									// Only include testmode for OAuth2
-									testmode: '={{$parameter.authentication === "oAuth2" ? $parameter.testMode : undefined}}',
 								},
+							},
+							send: {
+								preSend: [
+									async function (this, requestOptions) {
+										const authentication = this.getNodeParameter('authentication', 0) as string;
+										
+										// Only include testmode for OAuth2 - read from credential
+										if (authentication === 'oAuth2') {
+											const credentials = await this.getCredentials('mollieOAuth2Api');
+											const testMode = credentials.testMode === true;
+											if (testMode) {
+												requestOptions.body = requestOptions.body || {};
+												requestOptions.body.testmode = true;
+											}
+										}
+										
+										return requestOptions;
+									},
+								],
 							},
 						},
 					},
@@ -246,9 +279,26 @@ export class Mollie implements INodeType {
 									reverseRouting: '={{$parameter.additionalFields?.reverseRouting || undefined}}',
 									routingReversals: '={{ $parameter.additionalFields?.routingReversals?.reversalValues ? $parameter.additionalFields.routingReversals.reversalValues.map(r => ({ amount: { value: parseFloat(r.amountValue || 0).toFixed(2), currency: r.amountCurrency }, source: { type: r.sourceType, organizationId: r.organizationId } })) : undefined }}',
 									metadata: '={{$parameter.additionalFields?.metadata || undefined}}',
-									// Only include testmode for OAuth2
-									testmode: '={{$parameter.authentication === "oAuth2" ? $parameter.testMode : undefined}}',
 								},
+							},
+							send: {
+								preSend: [
+									async function (this, requestOptions) {
+										const authentication = this.getNodeParameter('authentication', 0) as string;
+										
+										// Only include testmode for OAuth2 - read from credential
+										if (authentication === 'oAuth2') {
+											const credentials = await this.getCredentials('mollieOAuth2Api');
+											const testMode = credentials.testMode === true;
+											if (testMode) {
+												requestOptions.body = requestOptions.body || {};
+												requestOptions.body.testmode = true;
+											}
+										}
+										
+										return requestOptions;
+									},
+								],
 							},
 						},
 					},
@@ -267,10 +317,10 @@ export class Mollie implements INodeType {
 									async function (this, requestOptions) {
 										const authentication = this.getNodeParameter('authentication', 0) as string;
 										
-										// Only include testmode for OAuth2
+										// Only include testmode for OAuth2 - read from credential
 										if (authentication === 'oAuth2') {
-											const testModeParam = this.getNodeParameter('testMode', 0);
-											const testMode = testModeParam === true;
+											const credentials = await this.getCredentials('mollieOAuth2Api');
+											const testMode = credentials.testMode === true;
 											if (testMode) {
 												requestOptions.qs = requestOptions.qs || {};
 												requestOptions.qs.testmode = true;
@@ -313,10 +363,10 @@ export class Mollie implements INodeType {
 										requestOptions.qs = requestOptions.qs || {};
 										requestOptions.qs.limit = limit;
 										
-										// Only include testmode for OAuth2
+										// Only include testmode for OAuth2 - read from credential
 										if (authentication === 'oAuth2') {
-											const testModeParam = this.getNodeParameter('testMode', 0);
-											const testMode = testModeParam === true;
+											const credentials = await this.getCredentials('mollieOAuth2Api');
+											const testMode = credentials.testMode === true;
 											if (testMode) {
 												requestOptions.qs.testmode = true;
 											}
@@ -363,9 +413,26 @@ export class Mollie implements INodeType {
 									redirectUrl: '={{$parameter.redirectUrl || undefined}}',
 									webhookUrl: '={{$parameter.webhookUrl || undefined}}',
 									expiresAt: '={{$parameter.expiresAt ? new Date($parameter.expiresAt).toISOString() : undefined}}',
-									// Only include testmode for OAuth2
-									testmode: '={{$parameter.authentication === "oAuth2" ? $parameter.testMode : undefined}}',
 								},
+							},
+							send: {
+								preSend: [
+									async function (this, requestOptions) {
+										const authentication = this.getNodeParameter('authentication', 0) as string;
+										
+										// Only include testmode for OAuth2 - read from credential
+										if (authentication === 'oAuth2') {
+											const credentials = await this.getCredentials('mollieOAuth2Api');
+											const testMode = credentials.testMode === true;
+											if (testMode) {
+												requestOptions.body = requestOptions.body || {};
+												requestOptions.body.testmode = true;
+											}
+										}
+										
+										return requestOptions;
+									},
+								],
 							},
 						},
 					},
@@ -545,20 +612,6 @@ export class Mollie implements INodeType {
 				},
 				default: '',
 				description: 'The profile this payment belongs to (required for OAuth2)',
-			},
-			{
-				displayName: 'Test Mode',
-				name: 'testMode',
-				type: 'boolean',
-				displayOptions: {
-					show: {
-						resource: ['payment'],
-						operation: ['create'],
-						authentication: ['oAuth2'],
-					},
-				},
-				default: false,
-				description: 'Whether to create the payment in test mode (OAuth2 only)',
 			},
 			// Advanced parameters for Create Payment
 			{
@@ -811,20 +864,6 @@ export class Mollie implements INodeType {
 				description: 'Provide any data you like in JSON format',
 				placeholder: '{"capture_id": "12345"}',
 			},
-			{
-				displayName: 'Test Mode',
-				name: 'testMode',
-				type: 'boolean',
-				displayOptions: {
-					show: {
-						resource: ['payment'],
-						operation: ['createCapture'],
-						authentication: ['oAuth2'],
-					},
-				},
-				default: false,
-				description: 'Whether to create the capture in test mode (OAuth2 only)',
-			},
 			// Create Refund parameters
 			{
 				displayName: 'Payment',
@@ -914,21 +953,6 @@ export class Mollie implements INodeType {
 				},
 				default: '',
 				description: 'The description of the refund',
-			},
-			// OAuth2-specific parameter for Create Refund
-			{
-				displayName: 'Test Mode',
-				name: 'testMode',
-				type: 'boolean',
-				displayOptions: {
-					show: {
-						resource: ['payment'],
-						operation: ['createRefund'],
-						authentication: ['oAuth2'],
-					},
-				},
-				default: false,
-				description: 'Whether to create the refund in test mode (OAuth2 only)',
 			},
 			// Advanced parameters for Create Refund
 			{
@@ -1033,20 +1057,6 @@ export class Mollie implements INodeType {
 				default: '',
 				description: 'The payment to retrieve',
 			},
-			{
-				displayName: 'Test Mode',
-				name: 'testMode',
-				type: 'boolean',
-				displayOptions: {
-					show: {
-						resource: ['payment'],
-						operation: ['get'],
-						authentication: ['oAuth2'],
-					},
-				},
-				default: false,
-				description: 'Whether to retrieve the payment in test mode (OAuth2 only)',
-			},
 			// List Payments parameters
 			{
 				displayName: 'Return All',
@@ -1078,20 +1088,6 @@ export class Mollie implements INodeType {
 				},
 				default: 100,
 				description: 'Max number of results to return',
-			},
-			{
-				displayName: 'Test Mode',
-				name: 'testMode',
-				type: 'boolean',
-				displayOptions: {
-					show: {
-						resource: ['payment'],
-						operation: ['getAll'],
-						authentication: ['oAuth2'],
-					},
-				},
-				default: false,
-				description: 'Whether to retrieve payments in test mode (OAuth2 only)',
 			},
 			{
 				displayName: 'Filters',
@@ -1241,20 +1237,6 @@ export class Mollie implements INodeType {
 				},
 				default: '',
 				description: 'The profile this payment link belongs to (required for OAuth2)',
-			},
-			{
-				displayName: 'Test Mode',
-				name: 'testMode',
-				type: 'boolean',
-				displayOptions: {
-					show: {
-						resource: ['paymentLink'],
-						operation: ['create'],
-						authentication: ['oAuth2'],
-					},
-				},
-				default: false,
-				description: 'Whether to create the payment link in test mode (OAuth2 only)',
 			},
 			// Common optional parameters
 			{

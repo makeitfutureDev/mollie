@@ -57,6 +57,7 @@ export class Mollie implements INodeType {
 			baseURL: 'https://api.mollie.com',
 			headers: {
 				Accept: 'application/json',
+			    'User-Agent': 'n8n-nodes-mollie/1.0.6'
 			},
 		},
 		properties: [

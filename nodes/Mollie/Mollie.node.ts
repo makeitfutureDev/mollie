@@ -6,6 +6,8 @@ import {
 	INodePropertyOptions,
 } from 'n8n-workflow';
 
+import { version } from '../../package.json';
+
 export class Mollie implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Mollie',
@@ -57,7 +59,7 @@ export class Mollie implements INodeType {
 			baseURL: 'https://api.mollie.com',
 			headers: {
 				Accept: 'application/json',
-			    'User-Agent': 'n8n-nodes-mollie/1.0.6'
+			    'User-Agent': `n8n-nodes-mollie/${version}`,
 			},
 		},
 		properties: [

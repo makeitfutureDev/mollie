@@ -257,7 +257,7 @@ Contributions are welcome!
 
 ## Support
 
-For issues, questions, or contributions, please visit the [GitHub repository](https://github.com/yourusername/n8n-nodes-mollie).
+For issues, questions, or contributions, please visit the [GitHub repository](https://github.com/mollie/mollie-n8n-nodes).
 
 ## Credits
 
